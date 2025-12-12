@@ -1,13 +1,215 @@
-body {
+/* index.css — Final Clean + Fixed Version */
+
+/* If using Tailwind, keep these. If not, they do nothing. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Basic page theme */
+:root {
+  --bg-gradient: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+  --muted: rgba(255, 255, 255, 0.75);
+}
+
+html,
+body,
+#root {
+  height: 100%;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  background: var(--bg-gradient);
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Global layout helper */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+/* ------------------------------------------------
+   DEFAULT NAV VISIBILITY (IMPORTANT!!)
+   ------------------------------------------------ */
+
+/* Desktop nav = visible */
+.main-nav { 
+  display: flex; 
+}
+
+/* Mobile hamburger button = hidden on desktop */
+.mobile-menu-btn { 
+  display: none; 
+}
+
+/* Mobile nav = hidden unless opened */
+.mobile-nav { 
+  display: none; 
+}
+
+/* ------------------------------------------------
+   Page + Grid Layouts
+   ------------------------------------------------ */
+
+.header-content { gap: 12px; }
+.site-header { padding: 12px 1rem; }
+
+.page-container {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 2rem;
+  align-items: start;
+}
+
+.notes-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* Titles */
+.hero-welcome { 
+  font-size: 28px; 
+  font-weight: 700; 
+  margin: 0; 
+}
+
+/* Search input */
+.search-input { 
+  width: calc(100% - 56px); 
+}
+
+/* ------------------------------------------------
+   RESPONSIVE RULES (MOBILE)
+   ------------------------------------------------ */
+
+@media (max-width: 900px) {
+
+  /* Hide desktop nav on mobile */
+  .main-nav { 
+    display: none !important; 
+  }
+
+  /* Show hamburger menu */
+  .mobile-menu-btn { 
+    display: inline-flex !important; 
+  }
+
+  /* Hide account text for cleaner mobile header */
+  .account-text { 
+    display: none; 
+  }
+
+  /* Stack content vertically */
+  .page-container {
+    display: block !important;
+    max-width: 980px;
+    margin: 1rem auto !important;
+    padding: 0 1rem !important;
+  }
+
+  /* Sidebar becomes full width */
+  .sidebar {
+    position: relative !important;
+    top: auto !important;
+    width: 100% !important;
+    margin-top: 24px;
+  }
+
+  .notes-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Text resize */
+  .hero-welcome { 
+    font-size: 1.6rem !important; 
+  }
+
+  /* Search adjust */
+  .search-input {
+    width: calc(100% - 56px) !important;
+  }
+
+  /* Mobile nav design */
+  .mobile-nav {
+    display: none;
+    background: rgba(26, 26, 46, 0.98);
+    padding: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+  }
+
+  .mobile-nav.open {
+    display: block;
+  }
+
+  .mobile-nav-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 10px 8px;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+  }
+}
+
+/* Phone-size tweaks */
+@media (max-width: 420px) {
+  .hero-welcome { font-size: 1.4rem !important; }
+  .site-header { padding: 10px 8px; }
+}
+
+/* ------------------------------------------------
+   MODAL RESPONSIVE FIXES
+   ------------------------------------------------ */
+
+.modal-box {
+  max-width: 720px;
+  width: 92%;
+}
+
+@media (max-width: 600px) {
+  .modal-box {
+    width: 95% !important;
+    padding: 14px !important;
+  }
+
+  .modal-input,
+  .modal-textarea {
+    font-size: 14px !important;
+  }
+
+  .modal-textarea {
+    min-height: 120px !important;
+  }
+}
+
+@media (max-width: 400px) {
+  .modal-box {
+    padding: 10px !important;
+  }
+
+  .modal-btn-cancel,
+  .modal-btn-save {
+    font-size: 14px !important;
+  }
 }
