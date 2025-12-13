@@ -1,23 +1,23 @@
 // src/App.js
-import React, { useState } from "react";
+import React from "react";
 import { AppProvider } from "./context/AppContext";
 import Header from "./components/Header";
 import MainRouter from "./router/MainRouter";
-import styles from "./styles/styles";
+import "./App.css";
 
 function App() {
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <AppProvider>
-      <div style={styles.app}>
-        {/* Header */}
-        <Header
-          onMenuToggle={() => setMobileMenuOpen(!isMobileMenuOpen)}
-          isMobileMenuOpen={isMobileMenuOpen}
-        />
-
-        {/* Router */}
+      {/* GLOBAL APP BACKGROUND */}
+      <div
+        style={{
+          minHeight: "100vh",
+          background:
+            "linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%)",
+          color: "#fff",
+        }}
+      >
+        <Header />
         <MainRouter />
       </div>
     </AppProvider>
