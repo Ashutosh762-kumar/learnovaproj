@@ -5,18 +5,42 @@ import styles from "../styles/styles";
 import { useAppContext } from "../context/AppContext";
 import Sidebar from "../components/Sidebar";
 import NoteModal from "../components/NoteModal";
+import { getRequest } from "../utils/apiService";
 
 const HomePage = () => {
   const { username, setCurrentRoute, addNote } = useAppContext();
+
   const [search, setSearch] = useState("");
   const [showResult, setShowResult] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
-  const handleSearch = (e) => {
+  const [answer, setAnswer] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // 🔍 Search question (calls backend)
+  const handleSearch = async (e) => {
     e.preventDefault();
-    if (search.trim()) setShowResult(true);
+    if (!search.trim()) return;
+
+    setLoading(true);
+    setError("");
+    setShowResult(false);
+
+    try {
+      const data = await getRequest(
+        `/api/ask?question=${encodeURIComponent(search)}`
+      );
+      setAnswer(data.answer);
+      setShowResult(true);
+    } catch (err) {
+      setError("Failed to fetch answer. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  // 💾 Save note
   const saveNote = (title, content) => {
     addNote({ title, content });
     setShowModal(false);
@@ -25,12 +49,16 @@ const HomePage = () => {
 
   return (
     <div className="page-container" style={styles.pageContainer}>
-
       <div style={styles.homeHero}>
         <div style={styles.heroContainer}>
-          <h1 className="hero-welcome" style={styles.heroWelcome}>Welcome, {username}</h1>
-          <p style={styles.heroSubtitle}>Ask your syllabus related questions...</p>
+          <h1 className="hero-welcome" style={styles.heroWelcome}>
+            Welcome, {username}
+          </h1>
+          <p style={styles.heroSubtitle}>
+            Ask your syllabus related questions...
+          </p>
 
+          {/* 🔍 Search */}
           <form onSubmit={handleSearch} style={styles.searchContainer}>
             <input
               placeholder="Ask your ques"
@@ -38,36 +66,61 @@ const HomePage = () => {
               onChange={(e) => setSearch(e.target.value)}
               style={styles.searchInput}
             />
-            <button style={styles.searchBtn} aria-label="Search">
+            <button type="submit" style={styles.searchBtn} aria-label="Search">
               <Search size={20} color="#fff" />
             </button>
           </form>
 
+          {/* ⏳ Loading & Error */}
+          {loading && (
+            <p style={{ color: "#aaa", marginTop: 10 }}>Searching...</p>
+          )}
+          {error && (
+            <p style={{ color: "red", marginTop: 10 }}>{error}</p>
+          )}
+
+          {/* ✅ Result */}
           {showResult && (
             <div style={{ marginTop: 18 }}>
-              <h3 style={{ fontSize: 18, marginBottom: 8 }}>What is an acid?</h3>
-              <div style={{ background: "rgba(255,255,255,0.03)", padding: 14, borderRadius: 10 }}>
+              <h3 style={{ fontSize: 18, marginBottom: 8 }}>{search}</h3>
+
+              <div
+                style={{
+                  background: "rgba(255,255,255,0.03)",
+                  padding: 14,
+                  borderRadius: 10,
+                }}
+              >
                 <div style={{ display: "flex", gap: 12 }}>
                   <div style={{ fontSize: 24 }}>👨‍🎓</div>
-                  <p style={{ margin: 0, color: "#ddd" }}>
-                    An acid releases hydrogen ions (H+). Examples: HCl (stomach acid), acetic acid (vinegar), citric acid (lemon).
-                  </p>
+                  <p style={{ margin: 0, color: "#ddd" }}>{answer}</p>
                 </div>
               </div>
 
               <div style={{ marginTop: 12, display: "flex", gap: 10 }}>
-                <button style={styles.primaryBtn} onClick={() => setShowModal(true)}>CREATE NOTES ON THIS TOPIC</button>
-                <button style={styles.secondaryBtn} onClick={() => setCurrentRoute("/practice")}>PRACTICE QUESTIONS</button>
+                <button
+                  style={styles.primaryBtn}
+                  onClick={() => setShowModal(true)}
+                >
+                  CREATE NOTES ON THIS TOPIC
+                </button>
+                <button
+                  style={styles.secondaryBtn}
+                  onClick={() => setCurrentRoute("/practice")}
+                >
+                  PRACTICE QUESTIONS
+                </button>
               </div>
             </div>
           )}
 
+          {/* 📝 Note Modal */}
           {showModal && (
             <NoteModal
               onClose={() => setShowModal(false)}
               onSave={saveNote}
               defaultTitle={`Note - ${search || "topic"}`}
-              defaultContent={`Quick note about: ${search || "topic"}`}
+              defaultContent={answer}
             />
           )}
         </div>
