@@ -6,12 +6,6 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db");
 
-// 🔍 DEBUG: CHECK ENV VARIABLES AT RUNTIME
-console.log("🔍 RENDER ENV CHECK:", {
-  MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET ? "SET" : undefined,
-  GEMINI_API_KEY: process.env.GEMINI_API_KEY ? "SET" : undefined,
-});
 
 // 🔹 ROUTES
 const authRoutes = require("./routes/auth");
