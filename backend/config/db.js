@@ -1,11 +1,17 @@
-const mongoose = require("mongoose");
+const sqlite3 = require("sqlite3").verbose();
+const path = require("path");
 
-const connectDB = async () => {
-  if (!process.env.MONGO_URI) {
-    throw new Error("MONGO_URI is not defined in environment variables");
+// 👇 absolute path resolved at runtime
+const dbPath = path.join(__dirname, "../database/ncert_education.db");
+
+console.log("🗂️ DB PATH:", dbPath);
+
+const db = new sqlite3.Database(dbPath, (err) => {
+  if (err) {
+    console.error("❌ DB connection error:", err.message);
+  } else {
+    console.log("✅ Connected to NCERT SQLite database");
   }
+});
 
-  await mongoose.connect(process.env.MONGO_URI);
-};
-
-module.exports = connectDB;
+module.exports = db;
