@@ -3,6 +3,7 @@ import React, { useState } from "react";
 export default function AskQuestion() {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [source, setSource] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -16,20 +17,25 @@ export default function AskQuestion() {
       setLoading(true);
       setError("");
       setAnswer("");
+      setSource("");
 
+      // 🔹 CALL RENDER BACKEND (NOT localhost)
       const res = await fetch(
-        `http://localhost:7000/api/ask?question=${encodeURIComponent(question)}`
+        `https://learnovaproj.onrender.com/api/ask?question=${encodeURIComponent(
+          question
+        )}`
       );
 
       const data = await res.json();
 
-      if (!res.ok) {
+      if (!res.ok || !data.success) {
         throw new Error(data.error || "Failed to get answer");
       }
 
       setAnswer(data.answer);
+      setSource(data.source);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -44,10 +50,16 @@ export default function AskQuestion() {
         value={question}
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Ask your syllabus question..."
-        style={{ width: "100%", padding: "12px", borderRadius: "8px" }}
+        style={{
+          width: "100%",
+          padding: "12px",
+          borderRadius: "8px",
+          fontSize: "16px",
+        }}
       />
 
-      <br /><br />
+      <br />
+      <br />
 
       <button
         onClick={askQuestion}
@@ -58,25 +70,36 @@ export default function AskQuestion() {
           color: "white",
           border: "none",
           borderRadius: "6px",
-          cursor: "pointer",
+          cursor: loading ? "not-allowed" : "pointer",
+          fontSize: "16px",
         }}
       >
         {loading ? "Thinking..." : "Ask"}
       </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && (
+        <p style={{ color: "red", marginTop: "15px" }}>{error}</p>
+      )}
 
       {answer && (
         <div
           style={{
-            marginTop: "20px",
-            padding: "15px",
+            marginTop: "25px",
+            padding: "18px",
             background: "#1f2937",
             borderRadius: "8px",
           }}
         >
-          <h4>Answer:</h4>
-          <p style={{ whiteSpace: "pre-line" }}>{answer}</p>
+          <h4>Answer</h4>
+
+          <p style={{ fontSize: "14px", color: "#9ca3af", marginBottom: "10px" }}>
+            Source:{" "}
+            {source === "database" ? "NCERT Database" : "AI (Gemini)"}
+          </p>
+
+          <p style={{ whiteSpace: "pre-line", lineHeight: "1.6" }}>
+            {answer}
+          </p>
         </div>
       )}
     </div>
