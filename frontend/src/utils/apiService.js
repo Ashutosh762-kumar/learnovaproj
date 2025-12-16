@@ -1,6 +1,7 @@
 const API_BASE_URL = "https://learnovaproj.onrender.com";
 
-// Generic GET request
+export default API_BASE_URL;
+
 export const getRequest = async (endpoint) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`);
 
@@ -11,7 +12,6 @@ export const getRequest = async (endpoint) => {
   return response.json();
 };
 
-// Generic POST request
 export const postRequest = async (endpoint, data) => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method: "POST",
