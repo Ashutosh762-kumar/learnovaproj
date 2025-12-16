@@ -5,7 +5,6 @@ import styles from "../styles/styles";
 import { useAppContext } from "../context/AppContext";
 import Sidebar from "../components/Sidebar";
 import NoteModal from "../components/NoteModal";
-import { getRequest } from "../utils/apiService";
 
 const HomePage = () => {
   const { username, setCurrentRoute, addNote } = useAppContext();
@@ -18,7 +17,7 @@ const HomePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // 🔍 Search question (calls backend)
+  // 🔍 Search question (FORCE Render backend)
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!search.trim()) return;
@@ -26,11 +25,21 @@ const HomePage = () => {
     setLoading(true);
     setError("");
     setShowResult(false);
+    setAnswer("");
 
     try {
-      const data = await getRequest(
-        `/api/ask?question=${encodeURIComponent(search)}`
+      const res = await fetch(
+        `https://learnovaproj.onrender.com/api/ask?question=${encodeURIComponent(
+          search
+        )}`
       );
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error("Failed to fetch answer");
+      }
+
       setAnswer(data.answer);
       setShowResult(true);
     } catch (err) {
@@ -93,7 +102,9 @@ const HomePage = () => {
               >
                 <div style={{ display: "flex", gap: 12 }}>
                   <div style={{ fontSize: 24 }}>👨‍🎓</div>
-                  <p style={{ margin: 0, color: "#ddd" }}>{answer}</p>
+                  <p style={{ margin: 0, color: "#ddd", whiteSpace: "pre-line" }}>
+                    {answer}
+                  </p>
                 </div>
               </div>
 
